@@ -1,0 +1,69 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Mocha",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "stopOnEntry": false,
+            "args": ["--no-timeouts", "--colors", "--recursive", "--require", "./build/test/test_helper.js", "build"], //you can specify paths to specific tests here
+            "runtimeExecutable": null,
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "env": {    
+                "NODE_ENV": "development"
+            },
+            "outDir": "${workspaceRoot}/build"            
+        },    
+        {
+            "name": "Test",
+            "type": "node",
+            "request": "launch",
+            "program": "/usr/local/bin/swagger",
+            "stopOnEntry": true,
+            "args": ["project", "test"],
+            "runtimeExecutable": null,
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "env": {
+                "NODE_ENV": "testing"
+            },
+            "outDir": "${workspaceRoot}/build"            
+        },    
+        {
+            "name": "Launch",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/build/app.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--harmony",
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development",
+                "DEBUG": "*"
+            },
+            "externalConsole": false,
+            "sourceMaps": true,
+            "outDir": "${workspaceRoot}/build"            
+        },
+        {
+            "name": "Attach",
+            "type": "node",
+            "request": "attach",
+            "port": 5858,
+            "address": "localhost",
+            "restart": false,
+            "sourceMaps": true,
+            "outDir": "${workspaceRoot}/build",
+            "localRoot": "${workspaceRoot}",
+            "remoteRoot": null
+        }
+    ]
+}
