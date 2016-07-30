@@ -17,7 +17,7 @@ describe('loaders', function() {
         }).catch((err) =>
         {
            console.log(err.message);
-           done();
+           throw err;
         });
 
       });

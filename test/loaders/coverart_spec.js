@@ -19,8 +19,8 @@ describe('loaders', function() {
 
         coverart.get(albums).then((result) => 
         {
-            result.forEach(function(element) {
-              expect(element).to.have.all.keys('id', 'title', 'first-release-date'  ,'image', 'thumbnail');
+            result.albums.forEach(function(album) {
+              expect(album).to.have.all.keys('id', 'title', 'first-release-date'  ,'image', 'thumbnail');
             }, this);
 
             done();

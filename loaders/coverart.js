@@ -103,5 +103,17 @@ export function get(albums)
         queue.add(_getRequest.bind(null, album))
     }, this);
 
-    return queue.start();
+    return queue.start().then((result) => 
+    {
+        var ret = {
+            'albums' : result,
+            'sources' : {
+                'coverart' : {
+                    'url' : `${restApi}/release-group/`
+                }
+             }
+        };
+
+        return ret;
+    });
 }
