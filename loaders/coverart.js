@@ -1,72 +1,24 @@
 
 import * as rp from 'request-promise';
-import * as BlueBirdQueue from 'bluebird-queue';
-import {parse} from 'url';
-import {reduce, first} from 'lodash';
+
+var PromiseThrottle = require('promise-throttle');
+var Promise = require('bluebird');
+var retry = require('bluebird-retry');
+
+var promiseThrottle = new PromiseThrottle({
+    requestsPerSecond: 10,          // up to 10 requests per second
+    promiseImplementation: Promise  // the Promise library you are using
+});
 
 var restApi = 'http://coverartarchive.org';
 var userAgent = 'Amivono/0.0.1 ( martin@amivono.com )';
-
-/**
- * Get the description from wikipedia if we got more then one hist from the query we pick the first one,
- * TODO: Add a log/note if we got more than one hit from wikipedia.
- * 
- * @param {any} json
- * @returns {array}
- */
-function _getDescription(json)
-{
-    var pages = json.query.pages;
-    return pages[Object.keys(pages)[0]];
-}
-
-
-/**
- * Get the title from a wikipedia url, the last part of the url path.
- * 
- * @param {any} wikipediaUrl
- * @returns
- */
-function _getTitleFromUrl(wikipediaUrl)
-{
-    var path = parse(wikipediaUrl).path.split('/');
-    return path[path.length-1];
-}
  
-
 /**
- * Get all the albums.
+ * retrive the information from coverart. 
  * 
- * @param {any} json
- * @returns {array}
+ * @param {array} albums collection
+ * @param {integer} current index to download images for.
  */
-function _getAlbums(json)
-{
-    var albums = reduce(json['release-groups'], (result, value, key) => {
-        if (value['primary-type'] == 'Album')
-        {
-            result.push({
-                'id': value['id'],
-                'title': value['title'],
-                'first-release-date': value['first-release-date']
-            });
-        }
-
-        return result;
-    }, []);
-
-    //Sort the albums by release dates.
-    return albums.sort((a, b) => 
-    {
-        if (a['first-release-date'] < b['first-release-date'])
-            return -1;
-        if (a['first-release-date'] > b['first-release-date'])
-            return 1;
-
-        return 0;
-    });
-}
-
 function _getRequest(album)
 {
     var restUrl = `${restApi}/release-group/${album.id}`;
@@ -79,10 +31,18 @@ function _getRequest(album)
     };
 
     return rp.get(options).then((json) => {
+        console.log("coverart: 200");
         album['image'] = json.images[0].image;
         album['thumbnail'] = json.images[0].thumbnails.large;
         return album;
-    });
+    }).catch((e) =>
+    {
+        console.log("coverart:", e.statusCode);
+        if (e.statusCode != 404)
+            throw e;
+ 
+        return album;
+   });
 }
 
 /**
@@ -95,15 +55,25 @@ function _getRequest(album)
  */
 export function get(albums)
 {
-    var queue = new BlueBirdQueue.default({
-      concurrency: 3
-    });
+    var options = 
+    {
+        backoff : 2,
+        timeout : 10 * 60 * 1000, // 10 minute timeout for all request;
+        max_tries : 10
+    };
 
-    albums.forEach(function(album) {
-        queue.add(_getRequest.bind(null, album))
-    }, this);
+    var requests = [];
+    for (var index = 0; index < albums.length; index++) {
+        let album = albums[index];
 
-    return queue.start().then((result) => 
+        var p = retry(() => {
+                return promiseThrottle.add(_getRequest.bind(this, album));
+            }, options);
+
+        requests.push(p);
+    }
+
+    return Promise.all(requests).then((result) => 
     {
         var ret = {
             'albums' : result,
