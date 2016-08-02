@@ -28,7 +28,9 @@ export var coverart = {
     };
 
 export var wikipedia = {
-        requestsPerSecond: 10, 
+        restApi: 'https://en.wikipedia.org/w/api.php',
+        userAgent : 'Amivono/0.0.1 ( martin@amivono.com )',
+        requestsPerSecond: 50, 
         backoff: 2,
         timeout: 5 * 60 * 1000, 
         numberOfTries: 10

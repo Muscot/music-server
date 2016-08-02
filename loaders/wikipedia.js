@@ -1,9 +1,29 @@
 import * as rp from 'request-promise';
 import {parse} from 'url';
-import {reduce, first} from 'lodash';
+import {wikipedia as config} from '../config';
+import retry from 'bluebird-retry';
+import Promise from 'bluebird';
+import PromiseThrottle from 'promise-throttle';
+import DebugLib from 'debug';
 
-var restApi = 'https://en.wikipedia.org/w/api.php';
-var userAgent = 'Amivono/0.0.1 ( martin@amivono.com )';
+/**
+ * Initilize wikipedia loader.
+ * ==================================
+ */
+var debug = DebugLib('wikipedia');
+debug('loaded', config);
+
+var promiseThrottle = new PromiseThrottle({
+    requestsPerSecond: config.requestsPerSecond, 
+    promiseImplementation: Promise  // the Promise library you are using
+});
+
+var retryOptions = 
+{
+    backoff : config.backOff,
+    timeout : config.timeOut,
+    max_tries : config.maxTries
+};
 
 /**
  * Get the description from wikipedia if we got more then one hist from the query we pick the first one,
@@ -31,41 +51,6 @@ function _getTitleFromUrl(wikipediaUrl)
     return path[path.length-1];
 }
  
-
-/**
- * Get all the albums.
- * 
- * @param {any} json
- * @returns {array}
- */
-function _getAlbums(json)
-{
-    var albums = reduce(json['release-groups'], (result, value, key) => {
-        if (value['primary-type'] == 'Album')
-        {
-            result.push({
-                'id': value['id'],
-                'title': value['title'],
-                'first-release-date': value['first-release-date']
-            });
-        }
-
-        return result;
-    }, []);
-
-    //Sort the albums by release dates.
-    return albums.sort((a, b) => 
-    {
-        if (a['first-release-date'] < b['first-release-date'])
-            return -1;
-        if (a['first-release-date'] > b['first-release-date'])
-            return 1;
-
-        return 0;
-    });
-}
-
-
 /**
  * Get information from musicbrainz this will be added to the structure of our API see swagger
  * defination of Artist.
@@ -74,20 +59,24 @@ function _getAlbums(json)
  * @param {string} wikipediaUrl, url to a wikipedia page, it will parse the name and send it to wikipedia Rest API.
  * @returns
  */
-export function get(wikipediaUrl)
+function _getRequest(wikipediaUrl)
 {
     var wikipediaTitle = _getTitleFromUrl(wikipediaUrl);
-    var restUrl = `${restApi}?action=query&format=json&prop=extracts&exintro=true&redirects=true&titles=${wikipediaTitle}`;
+    debug(`${wikipediaTitle} Start request`);
+
+    var restUrl = `${config.restApi}?action=query&format=json&prop=extracts&exintro=true&redirects=true&titles=${wikipediaTitle}`;
     var options = {
         uri: restUrl,
         headers: {
-            'User-Agent': userAgent
+            'User-Agent': config.userAgent
         },
         json: true
     };
 
     return rp.get(options).then((json) => {
         var desc = _getDescription(json);
+        debug(`${wikipediaTitle} Got response (pageid=${desc.pageid})`);
+ 
         var ret = {
             title : desc.title,
             description : desc.extract,
@@ -99,5 +88,22 @@ export function get(wikipediaUrl)
             } 
         };
         return ret;
+    }).catch((err) => {
+        debug(`${wikipediaTitle} Wait and retry (${err.statusCode})`);
+        throw err;
+    });;
+}
+
+
+export function get(wikipediaUrl)
+{
+    return retry(() => {
+        return promiseThrottle.add(_getRequest.bind(this, wikipediaUrl));
+    }, retryOptions).catch((err) =>
+
+    {
+        throw err;
+        //if (err.failure.statusCode == 503)
+        //    throw new RateLimitError(err.message);
     });
 }
