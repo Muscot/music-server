@@ -8,12 +8,32 @@ var Promise = require('bluebird');
 var retry = require('bluebird-retry');
 
 var promiseThrottle = new PromiseThrottle({
-    requestsPerSecond: 1,           // up to 10 requests per second
+    requestsPerSecond: 0.75,        // up to 10 requests per second
     promiseImplementation: Promise  // the Promise library you are using
 });
 
 var restApi = 'http://musicbrainz.org/ws/2';
 var userAgent = 'Amivono/0.0.1 ( martin@amivono.com )';
+
+
+/**
+ * Define the errors for musicbrainz.
+ * ==================================
+ */
+
+/**
+ * If throttle and retry do not succed to retrieve the request, fire this error. $
+ * default configuration for musicbrainz is 1 request/sec and 10 retries. 
+ * @export
+ * @param {any} message
+ */
+export function RateLimitError(message) {
+    this.name = "RateLimitError";
+    this.statusCode = 503;
+    this.message = (message || "");
+}
+RateLimitError.prototype = Object.create(Error.prototype);
+
 
 /**
  * Get all the musicbrainz relations with relation type as keys.
@@ -113,11 +133,15 @@ export function get(mbid)
     var options = 
     {
         backoff : 2,
-        timeout : 1 * 60 * 1000, // 1 minute timeout for all request;
+        timeout : 10 * 60 * 1000, // 10 minute timeout for all request;
         max_tries : 10
     };
 
     return retry(() => {
         return promiseThrottle.add(_getRequest.bind(this, mbid));
-    }, options);
+    }, options).catch((err) =>
+    {
+        if (err.failure.statusCode == 503)
+            throw new RateLimitError(err.message);
+    });
 }

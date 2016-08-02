@@ -6,27 +6,30 @@ describe('loaders', function() {
 
   describe('musicbrainz', function() {
 
-    describe('GET artist', function() {
+    describe('GET artist from musicbrainz', function() {
 
-      it('should return a data from musicbrainz', (done) => {
+      it('should return a valid json', (done) => {
         
+
         musicbrainz.get('5b11f4ce-a62d-471e-81fc-a69a8278c7da').then((result) => 
         {
             expect(result).to.have.all.keys('mbid', 'albums', 'sources');
             expect(result.mbid).to.be.a('string');
-            done();
-        }).catch((err) =>
+        }).catch(musicbrainz.RateLimitError, (err) =>
+        {
+            expect(err.statusCode).equal(503);
+            expect(err.message).to.have.length.above(1);
+        })
+        .catch((err) =>
         {
            console.log(err.message);
            throw err;
-        });
+        }).done(() => done());
 
       });
 
       it('should return data for all musicbrainz ids (throttle test)', (done) => {
 
-        done();
-        return;
         var ids = [
           '5eecaf18-02ec-47af-a4f2-7831db373419',
           'ff6e677f-91dd-4986-a174-8db0474b1799',
@@ -41,7 +44,12 @@ describe('loaders', function() {
           {
               expect(result).to.have.all.keys('mbid', 'albums', 'sources');
               expect(result.mbid).to.be.a('string');
-          }).catch((err) =>
+          }).catch(musicbrainz.RateLimitError, (err) =>
+          {
+              expect(err.statusCode).equal(503);
+              expect(err.message).to.have.length.above(1);
+          })
+          .catch((err) =>
           {
             console.log(err.message);
             throw err;
