@@ -39,17 +39,25 @@ function _sendSuccess(res, mbid, result)
     res.send(result);
 }
 
+function _sendError(res, mbid, err)
+{
+    res.set('Content-Type', 'application/json');
+    res.status(err.statusCode).send({
+        'status' : err.statusCode,
+        'message' : err.message
+    });
+}
+
 export function get(req, res, next) {
 
+    var musicbrainzResult, wikipediaResult, coverartResult, finalResult = {};
     var mbid = req.swagger.params.mbid.value;
-    var musicbrainzResult, wikipediaResult, coverartResult;
-    var all = {};
 
     // check if we have a cache result for the mbid.
     var cacheResult = cache.get(mbid);
     if (cacheResult)
     {
-        _sendSuccess(res, mbid, result);
+        _sendSuccess(res, mbid, cacheResult);
         return;
     }
 
@@ -57,14 +65,16 @@ export function get(req, res, next) {
     var pendingPromise = pending.get(mbid);
     if (pendingPromise)
     {
-        pendingPromise.then((result) => 
+        pendingPromise.done((result) => 
         {
-            _sendSuccess(res, mbid, result);
+            if (result instanceof Error)
+                _sendError(res, mbid, result);
+            else
+                _sendSuccess(res, mbid, result);
         });
     }
     else
     {
-
         // If we have the result in the database use that. 
         var p = database.getArtist(mbid).then((result) => 
         {
@@ -87,25 +97,25 @@ export function get(req, res, next) {
                 return coverart.get(musicbrainzResult.albums);
             }).then(function(result) {
                 coverartResult = result;
-                merge(all, musicbrainzResult, wikipediaResult, coverartResult);
-                return database.saveArtist(all);
+                merge(finalResult, musicbrainzResult, wikipediaResult, coverartResult);
+                return database.saveArtist(finalResult);
             }).then(function(result) {
                 // send result to the client.
                 _sendSuccess(res, mbid, result);
                 pending.del(mbid);
+                return result;
             }).catch((err) => {
-                console.log(err);
                 pending.del(mbid);
                 throw err;
             });
 
+        }).catch(musicbrainz.RateLimitError, (err) =>
+        {
+            _sendError(res, mbid, err);
+            return err;
         }).catch((err) => {
-            res.set('Content-Type', 'application/json');
-            res.status(err.statusCode);
-            res.send({
-                'status' : err.statusCode,
-                'message' : err.message
-            });
+            _sendError(res, mbid, err);
+            return err;
         });
 
         pending.set(mbid, p);

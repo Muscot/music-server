@@ -1,5 +1,6 @@
 import * as coverart from '../../loaders/coverart';
 import {expect} from 'chai';
+
 describe('loaders', function() { 
 
   describe('coverart', function() {
@@ -7,7 +8,7 @@ describe('loaders', function() {
     describe('GET image urls', function() {
 
       it('Should return image urls for all the albums', (done) => {
-        
+   
         var albums = [
           { 'id': 'f1afec0b-26dd-3db5-9aa1-c91229a74a24',
             'title': 'Bleach',
