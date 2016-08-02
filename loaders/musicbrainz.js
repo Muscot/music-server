@@ -1,20 +1,29 @@
 import * as rp from 'request-promise';
+import {musicbrainz as config} from '../config';
 import {reduce} from 'lodash';
-//import * as Promise from 'bluebird';
-//import * as PromiseThrottle from 'promise-throttle';
+import retry from 'bluebird-retry';
+import Promise from 'bluebird';
+import PromiseThrottle from 'promise-throttle';
+import DebugLib from 'debug';
 
-var PromiseThrottle = require('promise-throttle');
-var Promise = require('bluebird');
-var retry = require('bluebird-retry');
+/**
+ * Initilize musicbrainz.
+ * ==================================
+ */
+var debug = DebugLib('musicbrainz');
+debug('loaded', config);
 
 var promiseThrottle = new PromiseThrottle({
-    requestsPerSecond: 0.75,        // up to 10 requests per second
+    requestsPerSecond: config.requestsPerSecond, 
     promiseImplementation: Promise  // the Promise library you are using
 });
 
-var restApi = 'http://musicbrainz.org/ws/2';
-var userAgent = 'Amivono/0.0.1 ( martin@amivono.com )';
-
+var retryOptions = 
+{
+    backoff : config.backOff,
+    timeout : config.timeOut,
+    max_tries : config.maxTries
+};
 
 /**
  * Define the errors for musicbrainz.
@@ -84,17 +93,19 @@ function _getAlbums(json)
 
 function _getRequest(mbid)
 {
-    console.log("get from musicbrainz:" + mbid);
-    var restUrl = `${restApi}/artist/${mbid}?&fmt=json&inc=url-rels+release-groups`;
+    debug(`${mbid} Start request`);
+    var restUrl = `${config.restApi}/artist/${mbid}?&fmt=json&inc=url-rels+release-groups`;
     var options = {
         uri: restUrl,
         headers: {
-            'User-Agent': userAgent
+            'User-Agent': config.userAgent
         },
         json: true
     };
 
     return rp.get(options).then((json) => {
+        debug(`${mbid} Got response (${json.name})`);
+ 
         var ret = {
             mbid : json.id,
             albums : _getAlbums(json),
@@ -113,7 +124,7 @@ function _getRequest(mbid)
 
         return ret;
     }).catch((err) => {
-        console.log(err.statusCode);
+        debug(`${mbid} Wait and retry (${err.statusCode})`);
         throw err;
     });
 };
@@ -130,16 +141,9 @@ function _getRequest(mbid)
  */
 export function get(mbid)
 {
-    var options = 
-    {
-        backoff : 2,
-        timeout : 10 * 60 * 1000, // 10 minute timeout for all request;
-        max_tries : 10
-    };
-
     return retry(() => {
         return promiseThrottle.add(_getRequest.bind(this, mbid));
-    }, options).catch((err) =>
+    }, retryOptions).catch((err) =>
     {
         if (err.failure.statusCode == 503)
             throw new RateLimitError(err.message);
