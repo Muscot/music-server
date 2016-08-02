@@ -127,6 +127,22 @@ describe('controllers', function() {
 
     });
 
+    describe('GET /artists', function() {
+        it('Should return all rows from database', function(done) {
+
+          request(server)
+              .get('/artists')
+              .set('Accept', 'application/json')
+              .set('Connection', 'keep-alive')
+              .expect('Content-Type', /json/)
+              .end(function(err, res) {
+                var json = res.body;
+                done();
+              });   
+        });
+    });
+
+
   });
 
 });

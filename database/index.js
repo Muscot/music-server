@@ -1,17 +1,25 @@
-import * as config from '../config';
+import {database as config} from '../config';
+import Promise from 'bluebird';
+import mysql from 'mysql';
+import DebugLib from 'debug';
 
-var Promise = require("bluebird");
-var mysql = require('mysql');
-var _ = require('lodash');
-var pool = mysql.createPool(config.database);
+/**
+ * Initilize database layer.
+ * ==================================
+ */
+var debug = DebugLib('database');
+debug('loaded', config.host, config.user);
+
+var pool = mysql.createPool(config);
 
 function query(sql, callback) {
-    console.log(sql);
+    debug(sql);
     pool.getConnection(function (err, connection) {
         if (err) {
             if (connection)
                 connection.release();
-            console.log(err);
+
+            debug(err.message);
             return callback(err);
         }
         connection.query(sql, function (err, rows) {
@@ -22,8 +30,17 @@ function query(sql, callback) {
 }
 var queryAsync = Promise.promisify(query);
 
+export function getArtists() {
+    return queryAsync('SELECT json FROM artist').then(function (rows) {
+        if (rows.length == 0)
+            return;
+
+        return rows;
+    });
+}
+
 export function getArtist(mbid) {
-    return queryAsync('select json from artist where mbid = "'+ mbid +'"').then(function (rows) {
+    return queryAsync('SELECT json FROM artist WHERE mbid = "'+ mbid +'"').then(function (rows) {
         if (rows.length == 0)
             return;
 
