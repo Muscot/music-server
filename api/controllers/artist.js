@@ -42,8 +42,9 @@ function _sendSuccess(res, mbid, result)
 function _sendError(res, mbid, err)
 {
     res.set('Content-Type', 'application/json');
-    res.status(err.statusCode).send({
-        'status' : err.statusCode,
+    var code = err.statusCode || 500;
+    res.status(code).send({
+        'status' : code,
         'message' : err.message
     });
 }

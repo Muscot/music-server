@@ -19,6 +19,8 @@ export var musicbrainz = {
     };
 
 export var coverart = {
+        restApi: 'http://coverartarchive.org',
+        userAgent : 'Amivono/0.0.1 ( martin@amivono.com )',
         requestsPerSecond: 10, 
         backoff: 2,
         timeout: 5 * 60 * 1000, 
