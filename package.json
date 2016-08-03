@@ -1,12 +1,12 @@
 {
-  "name": "cygni",
-  "version": "0.0.1",
+  "name": "music-server",
+  "version": "1.0.0",
   "private": true,
-  "description": "New Swagger API Project",
+  "description": "RestAPI to retrieve music information from musicbrainz, coverart and wikipedia.",
   "keywords": [],
   "author": "",
   "license": "",
-  "main": "app.js",
+  "main": "build/app.js",
   "dependencies": {
     "babel": "^6.5.2",
     "babel-cli": "^6.11.4",
@@ -37,7 +37,7 @@
   },
   "scripts": {
     "start": "node build/app.js",
-    "test": "swagger project test build/",
+    "test": "mocha --no-timeouts --colors --recursive build/",
     "build": "babel . -d build/ --ignore build,node_modules",
     "build:watch": "babel . -watch -d build/ --ignore build,node_modules"
   },

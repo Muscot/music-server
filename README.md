@@ -54,6 +54,8 @@ docker run --restart=always --name db-container -e MYSQL_ROOT_PASSWORD=xxx -p 33
 - ** Byt gärna ut 'www'@'%' mot 'www'@'192.168.10.190'** I production skall endast ip nummer från webservern vara tillåten att koppla upp sig mot databasen.
 
 ```
+CREATE DATABASE IF NOT EXISTS music;
+USE music;
 DROP TABLE IF EXISTS `artist`;
 
 CREATE TABLE `artist` (
