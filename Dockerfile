@@ -1,14 +1,14 @@
 FROM mhart/alpine-node:latest
 
-RUN apk add --update \
-    --no-cache make gcc g++ python
+#RUN apk add --update \
+#    --no-cache make gcc g++ python
 
 RUN adduser -D app
 
 ENV HOME=/home/app
 ENV NODE_ENV=production
 
-COPY package.json npm-shrinkwrap.json $HOME/server/
+COPY package.json $HOME/server/
 RUN chown -R app:app $HOME/*
 
 USER app

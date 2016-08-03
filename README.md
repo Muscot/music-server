@@ -40,7 +40,8 @@ docker run --restart=always --name db-container -e MYSQL_ROOT_PASSWORD=xxx -p 33
 ```
 
 - Kör sql script finns även sparat under /database/script.sql
-- ** Byt gärna ut www lösenord, och konfigurera sen music-server med lösenordet (se Konfiguration nedan)
+- ** Byt gärna ut www lösenord**, och konfigurera sen music-server med lösenordet (se Konfiguration nedan)
+- ** Byt gärna ut 'www'@'%' mot 'www'@'192.168.10.190'** I production skall endast ip nummer från webservern vara tillåten att koppla upp sig mot databasen.
 
 ```
 DROP TABLE IF EXISTS `artist`;
@@ -109,6 +110,70 @@ export var wikipedia = {
     };
 ```
 
+# Benchmark
+
+Running two docker conatiner on a very small server. 
+
+```
+root@docker-music-server:~# ab -n10000 -c100 http://95.85.24.243:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
+This is ApacheBench, Version 2.3 <$Revision: 1528965 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 95.85.24.243 (be patient)
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests
+
+
+Server Software:        
+Server Hostname:        95.85.24.243
+Server Port:            10010
+
+Document Path:          /artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
+Document Length:        9077 bytes
+
+Concurrency Level:      100
+Time taken for tests:   16.090 seconds
+Complete requests:      10000
+Failed requests:        0
+Total transferred:      93150000 bytes
+HTML transferred:       90770000 bytes
+Requests per second:    621.51 [#/sec] (mean)
+Time per request:       160.897 [ms] (mean)
+Time per request:       1.609 [ms] (mean, across all concurrent requests)
+Transfer rate:          5653.72 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   1.9      0      33
+Processing:    66  160  49.8    139     375
+Waiting:       66  160  49.7    138     374
+Total:         98  160  50.0    139     385
+
+Percentage of the requests served within a certain time (ms)
+  50%    139
+  66%    152
+  75%    167
+  80%    195
+  90%    252
+  95%    275
+  98%    294
+  99%    308
+ 100%    385 (longest request)
+```
+
+
+
+
 # TODO
 
 * Add benchmark to package.json
@@ -130,7 +195,8 @@ V2.0
 docker build -t music-server:latest .
 
 ## Run the image
-docker run --restart=always --name app-container -e MYSQL_HOST=192.168.99.100 -p 10010:10010 -d music-server:latest
+docker run --name app-container -e MYSQL_HOST=172.17.0.1 -p 10010:10010 -d music-server:latest
+--restart=always
 
 ## Run the mysql docker image
 docker run --restart=always --name db-container -e MYSQL_ROOT_PASSWORD=xxx -p 3306:3306 -d mysql/mysql-server:latest
