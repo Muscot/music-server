@@ -2,20 +2,20 @@
 
 #Cache
 
-- **Share promises:** Vi skapar en promise för att hämta data från databasen och de olika loaders (musicbrainz, coverart, wikipedia etc). Denna kan delas mellan request vilket gör att om samma MBID efterfrågas så behöver endast ett request ske till musicbrainz.
-detta gör också att vi hjälper databasen att klara av hög belastning. 
+- **Share promises:** Vi skapar en promise för att hämta data från databasen och de olika loaders (musicbrainz, coverart, wikipedia etc). Denna kan delas mellan request:en, vilket gör att om samma MBID efterfrågas så behöver endast ett request ske till musicbrainz oc det andra loaders.
+Detta gör också att vi hjälper databasen att klara av hög belastning. 
 
-- **LRU Cache:** Vi skapar en LRU cache för det mest 5000 använda requesten vilket gör att vi får väldigt snabb responstid.
+- **LRU Cache:** Vi skapar en LRU cache för det mest 5000 använda request:en vilket gör att vi får väldigt snabb responstid.
 
-- **Serialized json:** Vi skickar och cache:ar redan serialiserade json, vilket gör att webservern endast behöver skicka strängar, detta gör att vi får väldigt hög prestande från webservern, och vi inte överbelastar CPU med serialisering.
+- **Serialized json:** Vi skickar och cache:ar redan serialiserade json. Vilket gör att webservern endast behöver skicka strängar, detta gör att vi får väldigt hög prestanda från webservern, och vi inte överbelastar CPU med serialisering.
 
-- **Swagger validation:** Vi använder oss av swagger vilket kan validera alla request och responses, detta kan configureras slås på och av beroende på belastning.  
+- **Swagger validation:** Vi använder oss av swagger vilket kan validera alla request och response, detta kan konfigureras och slås av eller på beroende på belastning.  
 
-## Hur vi hanterar vi ratelimit från externa API:er
+## Hur vi hanterar vi Rate limit ifrån externa API:er
 
 - **Throttle:** För varje loader så har vi möjlighet att konfigurera hur många request per second som får skickas, resten köas upp med en timeout.
 
-- **Retry:** För varje loader så har vi möjlighet att konfigurera hur många gånger som den skall försöka hämta resultatet, efter varje försök så ökar vi tiden den väntar innan den försöka igen, detta gör att våra svarstider från vårat RestAPI kan vara långa men edast för nya förfrågningar. Tidigare förfrågningar finns sparat i våran mysql. 
+- **Retry:** För varje loader så har vi möjlighet att konfigurera hur många gånger som den skall försöka hämta resultatet. Efter varje försök så ökar vi tiden den väntar innan den försöka igen. Detta gör att våra svarstider från vårt RestAPI kan vara långa men endast för nya MBID. Tidigare förfrågningar finns sparat i våran mysql. 
 
 
 ## Live Demo
@@ -77,7 +77,7 @@ FLUSH PRIVILEGES;
 
 ## Konfiguration
 
-Det finns en konfiguration fil sparad config/index.js där instaällningar för databas och loaders finns.
+Det finns en konfiguration fil sparad config/index.js där inställningar för databas och loaders finns.
 på TODO listan finns att skapa en varsin konfigurations fil för development och production.
 
 ```
@@ -122,7 +122,13 @@ export var wikipedia = {
 
 # Benchmark
 
-Running two docker conatiner on a very small server. 
+Jag kör 2 docker conatiner på en väldigt liten server, så båda delar på 512MB minne, vilket inte räcker för en större
+databas, men vi kan ändå se att prestandan ligger runt 600 request per second.  
+
+512MBMemory
+1 CoreProcessor
+20GBSSD Disk
+1TBTransfer
 
 ```
 root@docker-music-server:~# ab -n10000 -c100 http://95.85.24.243:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
@@ -184,20 +190,23 @@ Percentage of the requests served within a certain time (ms)
 
 # TODO
 
+V1.0
 * Validera mbid
-
-* Tryit on DO.
-* Write the installation documentation.
-* Make the Docker container for nodejs
-* Make Not Implementated message on the other request.
-* Add benchmark to package.json
+* lägg till en konfiguration parameter för antal items i LRU Cache. 
+README.md
+- Write the installation documentation.
+- Write how to use swagger
+- Make so you can download docker images.  
+* Make "Not Implementated message" on the other request.
+* Add benchmark to package.json.
 
 V2.0
 * Bättre readme och installations guide.
 * Write the artist list
 * Bättre deployment
     - En ide är att använda webpack på serversidan så det skapas en bundle.js.
-* Alternativt använda en processmanger (StrongLoop) 
+* Alternativt använda en processmanger (StrongLoop).
+* Definiera upp “sources” i swagger.
 
 V3.0 - ideer.
 * Kunna konfigurera vilka loaders som skall användas
