@@ -62,6 +62,13 @@ export function get(req, res, next) {
 
     var musicbrainzResult, wikipediaResult, coverartResult, finalResult = {};
     var mbid = req.swagger.params.mbid.value;
+    // check if we got a valid mbid
+    try {
+        musicbrainz.validate(mbid);  
+    } catch (error) {
+        _sendError(res, mbid, error);
+        return;
+    }
 
     // check if we have a cache result for the mbid.
     var cacheResult = cache.get(mbid);

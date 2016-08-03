@@ -6,6 +6,22 @@ describe('loaders', function() {
 
   describe('musicbrainz', function() {
 
+    describe('VALIDATE mbid', function() {
+ 
+     it('should return ok', (done) => {
+        expect(musicbrainz.validate('5b11f4ce-a62d-471e-81fc-a69a8278c7da')).to.be.ok;
+        done();
+     });
+ 
+     it('should throw an exception', (done) => {
+        expect(musicbrainz.validate.bind(this, '5b114ce-a62d-471e-81fc-a69a278c7da')).to.throw(musicbrainz.BadRequest);
+        expect(musicbrainz.validate.bind(this, '')).to.throw(musicbrainz.BadRequest);
+        expect(musicbrainz.validate.bind(this, '-INVALID---------')).to.throw(musicbrainz.BadRequest);
+        done();
+     });
+ 
+   });
+
     describe('GET artist from musicbrainz', function() {
 
       it('should return a valid json', (done) => {

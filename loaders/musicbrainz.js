@@ -44,6 +44,15 @@ export function RateLimitError(message) {
 RateLimitError.prototype = Object.create(Error.prototype);
 
 
+export function BadRequest(message) {
+    this.name = "BadRequest";
+    this.statusCode = 400;
+    this.message = (message || "");
+}
+RateLimitError.prototype = Object.create(Error.prototype);
+
+
+
 /**
  * Get all the musicbrainz relations with relation type as keys.
  * 
@@ -148,4 +157,21 @@ export function get(mbid)
         if (err.failure.statusCode == 503)
             throw new RateLimitError(err.message);
     });
+}
+
+export function validate(mbid)
+{
+    var parts = mbid.split('-');
+    var notValid = new BadRequest("Not a valid MBID");
+    if (parts.length != 5)
+        throw notValid;
+
+    if (parts[0].length != 8 || 
+        parts[1].length != 4 || 
+        parts[2].length != 4 || 
+        parts[3].length != 4 || 
+        parts[4].length != 12)
+            throw notValid;
+
+    return true;
 }
