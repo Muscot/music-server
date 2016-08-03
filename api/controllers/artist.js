@@ -30,8 +30,11 @@ export function list(req, res, next) {
     database.getArtists().then((result) => 
     {
         var rows = [];
-        for (var index = 0; index < result.length; index++) {
-            rows.push(result[index].json);
+        if (result)
+        {
+            for (var index = 0; index < result.length; index++) {
+                rows.push(result[index].json);
+            }
         }
         res.set('Content-Type', 'application/json');
         res.send('[' + rows.join(',') + ']');
