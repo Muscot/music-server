@@ -112,6 +112,7 @@ describe('controllers', function() {
                 request(server)
                   .get('/artists/' + mbid)
                   .set('Accept', 'application/json')
+                  .set('Connection', 'keep-alive')
                   .expect('Content-Type', /json/)
                   .expect(200)
                   .end(function(err, res) {
