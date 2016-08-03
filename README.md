@@ -20,12 +20,12 @@ detta gör också att vi hjälper databasen att klara av hög belastning.
 
 ## Live Demo
 
-http://95.85.24.243:10010/artists
-http://95.85.24.243:10010/artists/5eecaf18-02ec-47af-a4f2-7831db373419
-http://95.85.24.243:10010/artists/ff6e677f-91dd-4986-a174-8db0474b1799
-http://95.85.24.243:10010/artists/7249b899-8db8-43e7-9e6e-22f1e736024e
-http://95.85.24.243:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
-http://95.85.24.243:10010/artists/e1f1e33e-2e4c-4d43-b91b-7064068d3283
+- http://95.85.24.243:10010/artists
+- http://95.85.24.243:10010/artists/5eecaf18-02ec-47af-a4f2-7831db373419
+- http://95.85.24.243:10010/artists/ff6e677f-91dd-4986-a174-8db0474b1799
+- http://95.85.24.243:10010/artists/7249b899-8db8-43e7-9e6e-22f1e736024e
+- http://95.85.24.243:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
+- http://95.85.24.243:10010/artists/e1f1e33e-2e4c-4d43-b91b-7064068d3283
 
 ## Installation
 
