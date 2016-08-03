@@ -36,7 +36,7 @@
     "dotenv": "^1.2.0"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "node build/app.js",
     "test": "swagger project test build/",
     "build": "babel . -d build/ --ignore build,node_modules",
     "build:watch": "babel . -watch -d build/ --ignore build,node_modules"

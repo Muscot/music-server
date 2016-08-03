@@ -29,7 +29,7 @@ Detta gör också att vi hjälper databasen att klara av hög belastning.
 
 ## Installation
 
-#Installera node.js server
+#Installera node.js music-server
 ```
 
 git clone https://github.com/Muscot/music-server.git music-server
@@ -74,6 +74,20 @@ GRANT ALL PRIVILEGES ON music . * TO 'www'@'%';
 FLUSH PRIVILEGES;
 ```
 
+## Bygg docker image för music-server (optional)
+Det finns en Dockerfile så man kan bygga en node.js docker image as music-server
+**Du behöver ange vilket ip-nummer som du kör mysql på.**
+
+```
+docker build -t music-server:latest .
+docker run --name app-container -e MYSQL_HOST=172.17.0.1 -p 10010:10010 -d music-server:latest
+```
+
+## Kör music-server utan docker
+för att starta servern behöver du bara använda dig av npm start.
+```
+npm start
+```
 
 ## Konfiguration
 
