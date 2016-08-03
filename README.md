@@ -1,8 +1,8 @@
-## Hur vi uppnår ett restAPi som klarar av högbelastning.
+## Hur vi uppnår ett restAPi som klarar av hög belastning.
 
 #Cache
 
-- **Share promises:** Vi skapar en promise för att hämta data från databasen och de olika loaders (musicbrainz, coverart, wikipedia etc). Denna kan delas mellan request:en, vilket gör att om samma MBID efterfrågas så behöver endast ett request ske till musicbrainz oc det andra loaders.
+- **Share promises:** Vi skapar en promise för att hämta data från databasen och de olika loaders (musicbrainz, coverart, wikipedia etc). Denna promise kan delas mellan request:en, vilket gör att om samma MBID efterfrågas så behöver endast ett request ske till musicbrainz och det andra loaders.
 Detta gör också att vi hjälper databasen att klara av hög belastning. 
 
 - **LRU Cache:** Vi skapar en LRU cache för det mest 5000 använda request:en vilket gör att vi får väldigt snabb responstid.
@@ -11,12 +11,12 @@ Detta gör också att vi hjälper databasen att klara av hög belastning.
 
 - **Swagger validation:** Vi använder oss av swagger vilket kan validera alla request och response, detta kan konfigureras och slås av eller på beroende på belastning.  
 
-## Hur vi hanterar vi Rate limit ifrån externa API:er
+## Hur vi hanterar Rate limit ifrån externa API:er
 
 - **Throttle:** För varje loader så har vi möjlighet att konfigurera hur många request per second som får skickas, resten köas upp med en timeout.
 
-- **Retry:** För varje loader så har vi möjlighet att konfigurera hur många gånger som den skall försöka hämta resultatet. Efter varje försök så ökar vi tiden den väntar innan den försöka igen. Detta gör att våra svarstider från vårt RestAPI kan vara långa men endast för nya MBID. Tidigare förfrågningar finns sparat i våran mysql. 
-
+- **Retry:** För varje loader så har vi möjlighet att konfigurera hur många gånger som den skall försöka hämta resultatet. Efter varje försök så ökar vi tiden den väntar innan nästa försöka. Detta gör att våra svarstider från vårt RestAPI kan vara långa om vi överstiger våran rate limit. 
+Men endast för nya MBID, de andra finns sparade i databasen.  
 
 ## Live Demo
 
@@ -92,7 +92,7 @@ npm start
 ## Konfiguration
 
 Det finns en konfiguration fil sparad config/index.js där inställningar för databas och loaders finns.
-på TODO listan finns att skapa en varsin konfigurations fil för development och production.
+på TODO listan finns att skapa en separat konfigurations fil för development och en för production.
 
 ```
 export var database = 
@@ -136,7 +136,7 @@ export var wikipedia = {
 
 # Benchmark
 
-Jag kör 2 docker conatiner på en väldigt liten server, så båda delar på 512MB minne, vilket inte räcker för en större
+Jag kör 2 docker container på en väldigt liten server, så båda delar på 512MB minne, vilket inte räcker för en större
 databas, men vi kan ändå se att prestandan ligger runt 600 request per second.  
 
 512MBMemory
