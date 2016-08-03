@@ -17,6 +17,16 @@ detta gör också att vi hjälper databasen att klara av hög belastning.
 
 - **Retry:** För varje loader så har vi möjlighet att konfigurera hur många gånger som den skall försöka hämta resultatet, efter varje försök så ökar vi tiden den väntar innan den försöka igen, detta gör att våra svarstider från vårat RestAPI kan vara långa men edast för nya förfrågningar. Tidigare förfrågningar finns sparat i våran mysql. 
 
+
+## Live Demo
+
+http://95.85.24.243:10010/artists
+http://95.85.24.243:10010/artists/5eecaf18-02ec-47af-a4f2-7831db373419
+http://95.85.24.243:10010/artists/ff6e677f-91dd-4986-a174-8db0474b1799
+http://95.85.24.243:10010/artists/7249b899-8db8-43e7-9e6e-22f1e736024e
+http://95.85.24.243:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
+http://95.85.24.243:10010/artists/e1f1e33e-2e4c-4d43-b91b-7064068d3283
+
 ## Installation
 
 #Installera node.js server
@@ -172,22 +182,26 @@ Percentage of the requests served within a certain time (ms)
 ```
 
 
-
-
 # TODO
 
-* Add benchmark to package.json
+* Validera mbid
+
+* Tryit on DO.
 * Write the installation documentation.
 * Make the Docker container for nodejs
-* Tryit on DO.
 * Make Not Implementated message on the other request.
+* Add benchmark to package.json
+
+V2.0
+* Bättre readme och installations guide.
+* Write the artist list
 * Bättre deployment
     - En ide är att använda webpack på serversidan så det skapas en bundle.js.
 * Alternativt använda en processmanger (StrongLoop) 
 
-V2.0
-* Write the artist list
-
+V3.0 - ideer.
+* Kunna konfigurera vilka loaders som skall användas
+* Kanske använda TypeScript och skapa interface för loaders. 
 
 # DOCKER HELPER
 

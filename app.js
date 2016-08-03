@@ -19,13 +19,4 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 
   var port = process.env.PORT || 10010;
   app.listen(port);
-  app.use((req, res, next) => {
-    if (!req.timedout) next();
-
-    res.set('Content-Type', 'application/json');
-    res.send({
-        'status' : 500,
-        'message' : "my timeout"
-    });
-  });
 });
