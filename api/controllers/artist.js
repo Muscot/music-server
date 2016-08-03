@@ -6,7 +6,7 @@ import * as database from '../../database';
 import LruCache from 'simple-lru-cache';
 import {merge} from 'lodash';
 
-// cache to store all pending request so we can share the promises.
+// Cache to store all pending request so we can share the promises.
 var pending = new LruCache({"maxSize":1000});
 
 // cache for the most common result, it's better to just cache the result than promises

@@ -13,7 +13,7 @@ RUN chown -R app:app $HOME/*
 
 USER app
 WORKDIR $HOME/server
-RUN npm install --no-optional
+RUN npm install
 
 USER root
 COPY . $HOME/server
