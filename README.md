@@ -248,7 +248,7 @@ V1.0
 README.md
 - Write the installation documentation.
 - Write how to use swagger.
-- Make so you can download docker images.  
+- Make so you can download docker images.
 * Make "Not Implementated message" on the other request.
 * Add benchmark to package.json.
 
@@ -258,12 +258,17 @@ V2.0
 * Bättre deployment
     - En ide är att använda webpack på serversidan så det skapas en bundle.js.
 * Definiera upp “sources” i swagger.
+* Använd query parameters i sql-frågorna.  
+* Skapa en swagger sida där du kan testa hela RestAPI.
+* Lägg till POST, PATCH, DELETE requesten.
 
 V3.0 - ideer.
 * Alternativt använda en processmanger (StrongLoop).
 * Kunna konfigurera vilka loaders som skall användas.
 * Kanske använda TypeScript och skapa interface för loaders.
 * Flytta delar av artist controller (shared promise, cache) som express middleware.
+* Gör så du kan söka på musicbrainz och plocka ut vilka MBID som skall laddas ned.
+* Gör en admin sida som man kan övervaka hur servern mår och vad det gör för tillfället.
 
 # DOCKER HELPER
 
@@ -271,8 +276,7 @@ V3.0 - ideer.
 docker build -t music-server:latest .
 
 ## Run the image
-docker run --name app-container -e MYSQL_HOST=172.17.0.1 -p 10010:10010 -d music-server:latest
---restart=always
+docker run --restart=always --name app-container -e MYSQL_HOST=172.17.0.1 -p 10010:10010 -d music-server:latest
 
 ## Run the mysql docker image
 docker run --restart=always --name db-container -e MYSQL_ROOT_PASSWORD=xxx -p 3306:3306 -d mysql/mysql-server:latest
