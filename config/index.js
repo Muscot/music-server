@@ -1,3 +1,8 @@
+export var cache = 
+{
+    maxSize: 1500 // Number of artists to cache.
+};
+
 export var database = 
 {
     connectionLimit: 15,
@@ -9,13 +14,14 @@ export var database =
     dateStrings: true
 };
 
+// I think I got better rate limit with python-musicbrainz/0.7.3 userAgent :-) 
 export var musicbrainz = {
         restApi: 'http://musicbrainz.org/ws/2',
         userAgent : 'python-musicbrainz/0.7.3',
         requestsPerSecond: 10, // Up to 10 requests per second
-        backOff: 2, // backoff factor if it fails and make a retry, increase the wait time.
+        backOff: 2, // Backoff factor if it fails and make a retry, increase the wait time.
         timeOut: 5 * 60 * 1000, // 5 minutes timeout, include alla retries and wait between request.
-        maxTries: 10 // try 10 times to retrieve the request if it fails. Increase the time with backoff factor.
+        maxTries: 10 // Try 10 times to retrieve the request if it fails. Increase the time with backoff factor.
     };
 
 export var coverart = {

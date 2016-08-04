@@ -44,12 +44,18 @@ export function RateLimitError(message) {
 RateLimitError.prototype = Object.create(Error.prototype);
 
 
+/**
+ * If the validation of MBID failed we throw this error.
+ * 
+ * @export
+ * @param {any} message
+ */
 export function BadRequest(message) {
     this.name = "BadRequest";
     this.statusCode = 400;
     this.message = (message || "");
 }
-RateLimitError.prototype = Object.create(Error.prototype);
+BadRequest.prototype = Object.create(Error.prototype);
 
 
 
@@ -68,7 +74,7 @@ function _getRelations(json)
 }
 
 /**
- * Get all the albums.
+ * Get all the albums from the response, and sort the result after release-date.
  * 
  * @param {any} json
  * @returns {array}
@@ -100,6 +106,12 @@ function _getAlbums(json)
     });
 }
 
+/**
+ * Execute the request to musicbrainz and wait for the response.
+ * 
+ * @param {string} mbid
+ * @returns
+ */
 function _getRequest(mbid)
 {
     debug(`${mbid} Start request`);
@@ -115,6 +127,7 @@ function _getRequest(mbid)
     return rp.get(options).then((json) => {
         debug(`${mbid} Got response (${json.name})`);
  
+        // This result will later be merge and added to the structure of our API see swagger defination of Artist.
         var ret = {
             mbid : json.id,
             albums : _getAlbums(json),
@@ -126,7 +139,7 @@ function _getRequest(mbid)
             } 
         };
 
-        // add wikipedia if it exists;
+        // Add wikipedia if it exists;
         var relations = _getRelations(json);
         if (relations.wikipedia && relations.wikipedia.url)
             ret.sources.musicbrainz['wikipedia'] = relations.wikipedia.url.resource;
@@ -144,6 +157,8 @@ function _getRequest(mbid)
  * Get information from musicbrainz this will be added to the structure of our API see swagger
  * defination of Artist.
  * 
+ * It will throttle the request to musicbrainz, and retry the request again if it fails. See config file. 
+ * 
  * @export
  * @param {any} mbid
  * @returns
@@ -159,6 +174,13 @@ export function get(mbid)
     });
 }
 
+/**
+ * Simple validation of the musicbrainz ID (TOC CD). 
+ * 
+ * @export
+ * @param {string} mbid
+ * @returns {boolean} returns True or throw an exception.
+ */
 export function validate(mbid)
 {
     var parts = mbid.split('-');

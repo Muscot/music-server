@@ -41,7 +41,7 @@ npm run build
 
 #Installera mysql docker
 
-- ** Välj ett root lösenord och byt ut xxx nedan**, vi lägger sen till en www användare i databasen.
+- **Välj ett root lösenord och byt ut xxx nedan**. Vi lägger sen till en www användare i databasen.
 - Vi använder mysql 5.7 som har native stöd för att lagra JSON. 
 
 ```
@@ -77,7 +77,7 @@ FLUSH PRIVILEGES;
 ```
 
 ## Bygg docker image för music-server (optional)
-Det finns en Dockerfile så man kan bygga en node.js docker image as music-server
+Det finns en Dockerfile så man kan bygga en node.js docker image.
 **Du behöver ange vilket ip-nummer som du kör mysql på.**
 
 ```
@@ -86,7 +86,7 @@ docker run --name app-container -e MYSQL_HOST=172.17.0.1 -p 10010:10010 -d music
 ```
 
 ## Kör music-server utan docker
-för att starta servern behöver du bara använda dig av npm start.
+För att starta servern behöver du bara använda dig av npm start.
 ```
 npm start
 ```
