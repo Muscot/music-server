@@ -19,6 +19,7 @@
     "express": "^4.12.3",
     "mocha": "^2.5.3",
     "mysql": "^2.11.1",
+    "npm-build-tools": "^2.2.5",
     "promise-queue": "^2.2.3",
     "promise-throttle": "^0.2.0",
     "request": "^2.74.0",
@@ -39,6 +40,7 @@
     "start": "node build/app.js",
     "test": "mocha --no-timeouts --colors --recursive build/",
     "build": "babel . -d build/ --ignore build,node_modules",
+    "prebuild": "n-copy --source api/swagger --destination build/api/swagger '*'",
     "build:watch": "babel . -watch -d build/ --ignore build,node_modules"
   },
   "babel": {
