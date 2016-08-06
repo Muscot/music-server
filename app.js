@@ -1,8 +1,10 @@
 'use strict';
 
+var express = require('express');
 var SwaggerExpress = require('swagger-express-mw');
-var app = require('express')();
 var timeout = require('connect-timeout');
+
+var app = express();
 module.exports = app; // for testing
 
 var config = {
@@ -18,5 +20,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   swaggerExpress.register(app);
 
   var port = process.env.PORT || 10010;
+
+  app.use('/', express.static('public'));
   app.listen(port);
 });

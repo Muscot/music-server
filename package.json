@@ -39,9 +39,9 @@
   "scripts": {
     "start": "node build/app.js",
     "test": "mocha --no-timeouts --colors --recursive build/",
-    "build": "babel . -d build/ --ignore build,node_modules",
+    "build": "babel . -d build/ --ignore build,node_modules,public",
     "prebuild": "n-copy --source api/swagger --destination build/api/swagger '*'",
-    "build:watch": "babel . -watch -d build/ --ignore build,node_modules"
+    "build:watch": "babel . -watch -d build/ --ignore build,node_modules,public"
   },
   "babel": {
     "presets": [
