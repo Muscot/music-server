@@ -186,7 +186,7 @@ Jag la till swagger ui på rooten för att testa RestAPI:et.
 # Benchmark
 
 Jag kör 2 docker container på en väldigt liten server, så båda delar på 512MB minne, vilket inte räcker för en större
-databas, men vi kan ändå se att prestandan ligger runt 600 request per second.  
+databas, men vi kan ändå se att prestandan ligger runt 1000 request per second.  
 
 * 512MB Memory
 * 1 CoreProcessor
@@ -194,23 +194,23 @@ databas, men vi kan ändå se att prestandan ligger runt 600 request per second.
 * 1TB Transfer
 
 ```
-root@docker-music-server:~# ab -n10000 -c100 http://95.85.24.243:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
+root@docker-music-server:~# ab -k -n100000 -c150 http://95.85.24.243:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
 This is ApacheBench, Version 2.3 <$Revision: 1528965 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 95.85.24.243 (be patient)
-Completed 1000 requests
-Completed 2000 requests
-Completed 3000 requests
-Completed 4000 requests
-Completed 5000 requests
-Completed 6000 requests
-Completed 7000 requests
-Completed 8000 requests
-Completed 9000 requests
 Completed 10000 requests
-Finished 10000 requests
+Completed 20000 requests
+Completed 30000 requests
+Completed 40000 requests
+Completed 50000 requests
+Completed 60000 requests
+Completed 70000 requests
+Completed 80000 requests
+Completed 90000 requests
+Completed 100000 requests
+Finished 100000 requests
 
 
 Server Software:        
@@ -218,36 +218,38 @@ Server Hostname:        95.85.24.243
 Server Port:            10010
 
 Document Path:          /artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
-Document Length:        9077 bytes
+Document Length:        9325 bytes
 
-Concurrency Level:      100
-Time taken for tests:   16.090 seconds
-Complete requests:      10000
+Concurrency Level:      150
+Time taken for tests:   96.424 seconds
+Complete requests:      100000
 Failed requests:        0
-Total transferred:      93150000 bytes
-HTML transferred:       90770000 bytes
-Requests per second:    621.51 [#/sec] (mean)
-Time per request:       160.897 [ms] (mean)
-Time per request:       1.609 [ms] (mean, across all concurrent requests)
-Transfer rate:          5653.72 [Kbytes/sec] received
+Keep-Alive requests:    100000
+Total transferred:      956800000 bytes
+HTML transferred:       932500000 bytes
+Requests per second:    1037.09 [#/sec] (mean)
+Time per request:       144.635 [ms] (mean)
+Time per request:       0.964 [ms] (mean, across all concurrent requests)
+Transfer rate:          9690.32 [Kbytes/sec] received
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:        0    0   1.9      0      33
-Processing:    66  160  49.8    139     375
-Waiting:       66  160  49.7    138     374
-Total:         98  160  50.0    139     385
+Connect:        0    0   1.1      0      43
+Processing:    29  144  49.1    119     324
+Waiting:       29  144  49.1    119     323
+Total:         73  144  49.1    119     324
 
 Percentage of the requests served within a certain time (ms)
-  50%    139
-  66%    152
-  75%    167
-  80%    195
-  90%    252
-  95%    275
-  98%    294
-  99%    308
- 100%    385 (longest request)
+  50%    119
+  66%    138
+  75%    172
+  80%    200
+  90%    227
+  95%    239
+  98%    263
+  99%    278
+ 100%    324 (longest request)
+
 ```
 
 
