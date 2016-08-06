@@ -3,7 +3,7 @@ info:
   version: "1.0.0"
   title: music-server
 # during dev, should point to your local machine
-host: localhost:10010
+host: 95.85.24.243:10010
 # basePath prefixes all resource paths 
 basePath: /
 # 

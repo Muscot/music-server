@@ -20,6 +20,7 @@ Men endast för nya MBID, de andra finns sparade i databasen.
 
 ## Live Demo
 
+- http://95.85.24.243:10010/
 - http://95.85.24.243:10010/artists
 - http://95.85.24.243:10010/artists/5eecaf18-02ec-47af-a4f2-7831db373419
 - http://95.85.24.243:10010/artists/ff6e677f-91dd-4986-a174-8db0474b1799
@@ -49,9 +50,9 @@ docker run --restart=always --name db-container -e MYSQL_ROOT_PASSWORD=xxx -p 33
 
 ```
 
-- Kör sql script finns även sparat under /database/script.sql
+- Kör sql script nedan, finns även sparat under /database/script.sql
 - **Byt gärna ut www lösenord**, och konfigurera sen music-server med lösenordet (se Konfiguration nedan)
-- **Byt gärna ut 'www'@'%' mot 'www'@'192.168.10.190'** I production skall endast ip nummer från webservern vara tillåten att koppla upp sig mot databasen.
+- **Byt gärna ut 'www'@'%' mot ditt docker ip nummer tex. 'www'@'192.168.10.190'** I production skall endast ip nummer från webservern vara tillåten att koppla upp sig mot databasen.
 
 ```
 CREATE DATABASE IF NOT EXISTS music;
@@ -178,6 +179,10 @@ export var wikipedia = {
     };
 ```
 
+# Swagger UI
+Jag la till swagger ui på rooten för att testa RestAPI:et.
+* http://95.85.24.243:10010/
+
 # Benchmark
 
 Jag kör 2 docker container på en väldigt liten server, så båda delar på 512MB minne, vilket inte räcker för en större
@@ -249,16 +254,13 @@ Percentage of the requests served within a certain time (ms)
 # TODO
 
 V1.0
-* lägg till en konfiguration parameter för antal items i LRU Cache. 
-README.md
-- Write the installation documentation.
 - Write how to use swagger.
 - Make so you can download docker images.
 * Make "Not Implementated message" on the other request.
 * Add benchmark to package.json.
 * Lägg till en version i url:en tex. http://musicserver.se/v1/artists
 * Hantera database down bättre. 
-* change all the required to es6 import.
+* Change all the require() to es6 import.
 
 
 V2.0
