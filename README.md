@@ -5,7 +5,7 @@
 - **Share promises:** Vi skapar en promise för att hämta data från databasen och de olika loaders (musicbrainz, coverart, wikipedia etc). Denna promise kan delas mellan request:en, vilket gör att om samma MBID efterfrågas så behöver endast ett request ske till musicbrainz och det andra loaders.
 Detta gör också att vi hjälper databasen att klara av hög belastning. 
 
-- **LRU Cache:** Vi skapar en LRU cache för det mest 5000 använda request:en vilket gör att vi får väldigt snabb responstid.
+- **LRU Cache:** Vi skapar en LRU cache för det mest 1500 använda request:en vilket gör att vi får väldigt snabb responstid.
 
 - **Serialized json:** Vi skickar och cache:ar redan serialiserade json. Vilket gör att webservern endast behöver skicka strängar, detta gör att vi får väldigt hög prestanda från webservern, och vi inte överbelastar CPU med serialisering.
 
@@ -50,8 +50,8 @@ docker run --restart=always --name db-container -e MYSQL_ROOT_PASSWORD=xxx -p 33
 ```
 
 - Kör sql script finns även sparat under /database/script.sql
-- ** Byt gärna ut www lösenord**, och konfigurera sen music-server med lösenordet (se Konfiguration nedan)
-- ** Byt gärna ut 'www'@'%' mot 'www'@'192.168.10.190'** I production skall endast ip nummer från webservern vara tillåten att koppla upp sig mot databasen.
+- **Byt gärna ut www lösenord**, och konfigurera sen music-server med lösenordet (se Konfiguration nedan)
+- **Byt gärna ut 'www'@'%' mot 'www'@'192.168.10.190'** I production skall endast ip nummer från webservern vara tillåten att koppla upp sig mot databasen.
 
 ```
 CREATE DATABASE IF NOT EXISTS music;
@@ -134,6 +134,11 @@ Det finns en konfiguration fil sparad config/index.js där inställningar för d
 på TODO listan finns att skapa en separat konfigurations fil för development och en för production.
 
 ```
+export var cache = 
+{
+    maxSize: 1500 // Number of artists to cache.
+};
+
 export var database = 
 {
     connectionLimit: 15,
@@ -251,6 +256,10 @@ README.md
 - Make so you can download docker images.
 * Make "Not Implementated message" on the other request.
 * Add benchmark to package.json.
+* Lägg till en version i url:en tex. http://musicserver.se/v1/artists
+* Hantera database down bättre. 
+* change all the required to es6 import.
+
 
 V2.0
 * Bättre readme och installations guide.

@@ -95,6 +95,17 @@ function _getRequest(wikipediaUrl)
 }
 
 
+/**
+ * Get information from wikipedia this will be added to the structure of our API see swagger
+ * defination of Artist.
+ * 
+ * TODO:
+ * - Test and see what wikipedia send back to us if we not throttle the request. RateLimitError?
+ * 
+ * @export
+ * @param {any} wikipediaUrl
+ * @returns {promise} Result will be the extracted values from wikipedia
+ */
 export function get(wikipediaUrl)
 {
     return retry(() => {
