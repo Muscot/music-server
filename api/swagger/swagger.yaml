@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  version: "0.0.1"
-  title: Cygni Music Libary
+  version: "1.0.0"
+  title: music-server
 # during dev, should point to your local machine
 host: localhost:10010
 # basePath prefixes all resource paths 
@@ -52,7 +52,6 @@ paths:
 
     post:
       description: Add a new artist to the list
-      # movie info to be stored
       parameters:
         - name: data
           description: Artist properties
@@ -142,6 +141,7 @@ paths:
 
   /swagger:
     x-swagger-pipe: swagger_raw
+
 # complex objects have schema definitions
 definitions:
 
@@ -170,36 +170,20 @@ definitions:
     properties:
       mbid:
         type: string
-        description: musicbrainz id
-      name:
+        description: Musicbrainz id (TOC)
+      title:
         type: string
-        description: Artist name
+        description: Artist name/title/group
       description:
         type: string
-        description: description retrivied from wiki
-      sources:
-        type: string
-        description: the urls that is used to retrieve the information 
-        items: 
-          $ref: '#/definitions/Source'
- 
+        description: Description retrivied from wiki
+  
       albums:
         type: array
         description: All the albums of the Artist
         items: 
           $ref: '#/definitions/Album'
     
-  Source:
-    type: object
-    description: The urls that is used to retrieve the information 
-    properties:
-      url:
-        type: string
-        description: The url to information.
-      title:
-        type: string
-        description: The page title.
-
   Album:
     type: object
     description: An album
@@ -207,10 +191,15 @@ definitions:
       id:
         type: string
         description: The album title.
-      title:
-        type: string
-        description: The album title.
       image:
         type: string
         description: the cover art of the album.
-  
+      thumbnail:
+        type: string
+        description: thumbnail image of the album.
+      title:
+        type: string
+        description: The album title.
+      first-release-date:
+        type: string
+        description: The album release date. 
