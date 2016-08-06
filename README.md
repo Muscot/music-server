@@ -272,6 +272,7 @@ V2.0
 * Använd query parameters i sql-frågorna.  
 * Skapa en swagger sida där du kan testa hela RestAPI.
 * Lägg till POST, PATCH, DELETE requesten.
+* Skapa en album tabell i databasen.
 
 V3.0 - ideer.
 * Alternativt använda en processmanger (StrongLoop).

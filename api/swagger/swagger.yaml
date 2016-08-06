@@ -190,13 +190,13 @@ definitions:
     properties:
       id:
         type: string
-        description: The album title.
+        description: The album id.
       image:
         type: string
-        description: the cover art of the album.
+        description: The cover art of the album.
       thumbnail:
         type: string
-        description: thumbnail image of the album.
+        description: Thumbnail image of the album.
       title:
         type: string
         description: The album title.
