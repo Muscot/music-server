@@ -8,25 +8,46 @@ describe('loaders', function() {
 
     describe('VALIDATE mbid', function() {
  
-     it('should return ok', (done) => {
+      it('should return ok', (done) => {
         expect(musicbrainz.validate('5b11f4ce-a62d-471e-81fc-a69a8278c7da')).to.be.ok;
         done();
-     });
- 
-     it('should throw an exception', (done) => {
-        expect(musicbrainz.validate.bind(this, '5b114ce-a62d-471e-81fc-a69a278c7da')).to.throw(musicbrainz.BadRequest);
-        expect(musicbrainz.validate.bind(this, '')).to.throw(musicbrainz.BadRequest);
-        expect(musicbrainz.validate.bind(this, '-INVALID---------')).to.throw(musicbrainz.BadRequest);
+      });
+
+      it('should throw an exception', (done) => {
+        expect(musicbrainz.validate.bind(this, '5b114ce-a62d-471e-81fc-a69a278c7da')).to.throw(musicbrainz.BadRequestError);
+        expect(musicbrainz.validate.bind(this, '')).to.throw(musicbrainz.BadRequestError);
+        expect(musicbrainz.validate.bind(this, '-INVALID---------')).to.throw(musicbrainz.BadRequestError);
         done();
-     });
- 
+      });
+
    });
 
     describe('GET artist from musicbrainz', function() {
 
+      it('should return no artist found', (done) => {
+        
+        musicbrainz.get('c6027135-3c5b-3246-955b-f5fc2a256dd8').then((result) => 
+        {
+            expect(result).to.have.all.keys('mbid', 'albums', 'sources');
+            expect(result.mbid).to.be.a('string');
+        }).catch(musicbrainz.NotFoundError, function (err) {
+            expect(err.statusCode).equal(404);
+            expect(err.message).to.have.length.above(1);
+        }).catch(musicbrainz.RateLimitError, (err) =>
+        {
+            expect(err.statusCode).equal(503);
+            expect(err.message).to.have.length.above(1);
+        })
+        .catch((err) =>
+        {
+           throw err;
+        }).done(() => done());
+
+      });
+
+
       it('should return a valid json', (done) => {
         
-
         musicbrainz.get('5b11f4ce-a62d-471e-81fc-a69a8278c7da').then((result) => 
         {
             expect(result).to.have.all.keys('mbid', 'albums', 'sources');
@@ -38,7 +59,6 @@ describe('loaders', function() {
         })
         .catch((err) =>
         {
-           console.log(err.message);
            throw err;
         }).done(() => done());
 
@@ -67,8 +87,7 @@ describe('loaders', function() {
           })
           .catch((err) =>
           {
-            console.log(err.message);
-            throw err;
+             throw err;
           }));
         }
 

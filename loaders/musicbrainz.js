@@ -50,13 +50,26 @@ RateLimitError.prototype = Object.create(Error.prototype);
  * @export
  * @param {any} message
  */
-export function BadRequest(message) {
-    this.name = "BadRequest";
+export function BadRequestError(message) {
+    this.name = "BadRequestError";
     this.statusCode = 400;
     this.message = (message || "");
 }
-BadRequest.prototype = Object.create(Error.prototype);
+BadRequestError.prototype = Object.create(Error.prototype);
 
+/**
+ * If musicbrainz don't found any artist with this MBID, use this exception. It will stop retries and reject the 
+ * request.
+ * 
+ * @export
+ * @param {any} message
+ */
+export function NotFoundError(message) {
+    this.name = "NotFoundError";
+    this.statusCode = 404;
+    this.message = (message || "");
+}
+NotFoundError.prototype = Object.create(Error.prototype);
 
 
 /**
@@ -146,6 +159,13 @@ function _getRequest(mbid)
 
         return ret;
     }).catch((err) => {
+
+        if (err.statusCode == 404)
+        {
+            debug(`${mbid} NotFoundError (${err.statusCode})`);
+            throw new retry.StopError(new NotFoundError(`No Artist found with MBID: ${mbid}`));
+        }
+
         debug(`${mbid} Wait and retry (${err.statusCode})`);
         throw err;
     });
@@ -169,8 +189,11 @@ export function get(mbid)
         return promiseThrottle.add(_getRequest.bind(this, mbid));
     }, retryOptions).catch((err) =>
     {
-        if (err.failure.statusCode == 503)
+        // failure is set when all retries failed or it times out.
+        if (err.failure && err.failure.statusCode == 503)
             throw new RateLimitError(err.message);
+        
+        throw err;
     });
 }
 
@@ -184,7 +207,7 @@ export function get(mbid)
 export function validate(mbid)
 {
     var parts = mbid.split('-');
-    var notValid = new BadRequest("Not a valid MBID");
+    var notValid = new BadRequestError("Not a valid MBID");
     if (parts.length != 5)
         throw notValid;
 
