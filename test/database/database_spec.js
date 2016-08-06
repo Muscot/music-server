@@ -40,7 +40,6 @@ describe('database', function() {
             done();
         }).catch((err) =>
         {
-           console.log(err.message);
            throw err;
         });
       });
