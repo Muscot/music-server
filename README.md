@@ -261,20 +261,19 @@ V1.0
 * Make "Not Implementated message" on the other request.
 * Add benchmark to package.json.
 * Lägg till en version i url:en tex. http://musicserver.se/v1/artists
-* Hantera database down bättre. 
+* Hantera "database down" bättre. 
 * Change all the require() to es6 import.
 
 
 V2.0
+* Lägg till POST, PATCH, DELETE requesten.
 * Bättre readme och installations guide.
-* Write the artist list
-* Bättre deployment
-    - En ide är att använda webpack på serversidan så det skapas en bundle.js.
 * Definiera upp “sources” i swagger.
 * Använd query parameters i sql-frågorna.  
 * Skapa en swagger sida där du kan testa hela RestAPI.
-* Lägg till POST, PATCH, DELETE requesten.
 * Skapa en album tabell i databasen.
+* Bättre deployment
+    - En ide är att använda webpack på serversidan så det skapas en bundle.js.
 
 V3.0 - ideer.
 * Alternativt använda en processmanger (StrongLoop).

@@ -36,6 +36,23 @@ describe('controllers', function() {
           });
       });
 
+      it('Should return Invalid MBID error ', function(done) {
+          request(server)
+            .get('/artists/5b11f4ce-a62d-471e--a69a8278c7da')
+            .set('Accept', 'application/json')
+            .set('Connection', 'keep-alive')
+            .expect('Content-Type', /json/)
+            .end(function(err, res) {
+                should.not.exist(err);
+                var json = res.body;
+                expect(json).to.have.all.keys('mbid', 'status', 'message');
+                expect(json.status).equal(400);
+                expect(res.statusCode).equal(400);
+                expect(res.error.text).to.have.length.above(1);
+                done();
+            });
+      });
+
       it('should still work with many request throttle and promise share.', function(done) {
 
           var ids = [
@@ -138,6 +155,25 @@ describe('controllers', function() {
               .expect('Content-Type', /json/)
               .end(function(err, res) {
                 var json = res.body;
+                done();
+              });   
+        });
+    });
+
+    describe('DELETE /artists/{mbid}', function() {
+        it('Should return GeneralResponse with status 200', function(done) {
+
+          request(server)
+              .del('/artists/5eecaf18-02ec-47af-a4f2-7831db373419')
+              .set('Accept', 'application/json')
+              .set('Connection', 'keep-alive')
+              .expect('Content-Type', /json/)
+              .end(function(err, res) {
+                should.not.exist(err);
+                var json = res.body;
+                expect(json).to.have.all.keys('mbid', 'status', 'message');
+                expect(json.status).equal(200);
+                expect(json.message).equal('Artist is deleted.');
                 done();
               });   
         });

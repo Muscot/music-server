@@ -76,6 +76,23 @@ export function getArtist(mbid) {
     });
 }
 
+
+/**
+ * Delete an artist if it exist in the database. if it do not exist it will not throw an Error.
+ * 
+ * @export
+ * @param {string} mbid
+ * @returns {promise} Result will be true or false if a row was removed from the database.
+ */
+export function deleteArtist(mbid) {
+    return queryAsync('DELETE FROM artist WHERE mbid = "'+ mbid +'"').then(function (result) {
+        if (result.affectedRows == 1)
+            return true;
+
+        return false;
+    });
+}
+
 /**
  * Save or update a Artist as a serialized json in artist table, returns affected_rows etc. 
  * If the row have been INSERTED or UPDATED.
