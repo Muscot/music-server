@@ -256,10 +256,10 @@ Percentage of the requests served within a certain time (ms)
 # TODO
 
 V1.0
-- Write how to use swagger.
-- Make so you can download docker images.
-* Make "Not Implementated message" on the other request.
-* Add benchmark to package.json.
+- Skriv mer information om swagger project/swagger ui
+- Lägg upp musicserver på dockerhub.
+* Skapa "Not Implementated message" på PATCH och POST
+* Lägg till benchmark i package.json. (npm run bench1)
 * Lägg till en version i url:en tex. http://musicserver.se/v1/artists
 * Hantera "database down" bättre. 
     - bättre felmeddelande till klienten.
@@ -282,6 +282,7 @@ V3.0 - ideer.
 * Flytta delar av artist controller (shared promise, cache) som express middleware.
 * Gör så du kan söka på musicbrainz och plocka ut vilka MBID som skall laddas ned.
 * Gör en admin sida som man kan övervaka hur servern mår och vad det gör för tillfället.
+* Lägg till en news loader (https://www.google.se/#q=nirvana+(band)&tbm=nws)
 
 # DOCKER HELPER
 
