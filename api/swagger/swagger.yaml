@@ -122,6 +122,8 @@ paths:
 
     delete:
       description: Delete a Artist
+      operationId: remove
+ 
       # define the parameters
       parameters:
         - name: mbid
@@ -148,22 +150,33 @@ definitions:
   GeneralResponse:
     type: object
     properties:
-      success:
+      mbid:
+        type: string
+        description: musicbrainz id
+      status:
         type: number
-        description: returns 1 if successful
-      description:
+        description: http status code
+      message:
         type: string
         description: a short comment 
     required:
-      - success
-      - description
+      - status
+      - mbid
+      - message
 
   ErrorResponse:
-    required:
-      - message
     properties:
+      mbid:
+        type: string
+        description: musicbrainz id
+      status:
+        type: number
       message:
         type: string
+    required:
+      - mbid
+      - status
+      - message
         
   Artist:
     type: object

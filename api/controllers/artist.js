@@ -43,13 +43,33 @@ export function list(req, res, next) {
 }
 
 /**
+ * Send success reponses to the client, it's used by ie. DELETE method, 
+ * See GeneralResponse swagger definition. 
  * 
+ * 
+ * @param {any} res
+ * @param {any} mbid
+ * @param {any} success
+ * @param {any} message
+ */
+function _sendSuccess(res, mbid, message)
+{
+    res.set('Content-Type', 'application/json');
+    res.json({
+        'mbid' : mbid,
+        'status' : 200,
+        'message' : message
+    });
+}
+
+/**
+ * Send a serialized Artist to the client, and store it in LRU Cache. Remove it from pending requests.
  * 
  * @param {object} res Express response.
  * @param {string} mbid The musicbrainz id.
  * @param {string} result The serilized json the is send back to the client. 
  */
-function _sendSuccess(res, mbid, result)
+function _sendResult(res, mbid, result)
 {
     cache.set(mbid, result);
     pending.del(mbid);
@@ -67,11 +87,46 @@ function _sendSuccess(res, mbid, result)
 function _sendError(res, mbid, err)
 {
     pending.del(mbid);
-    res.set('Content-Type', 'application/json');
     var code = err.statusCode || 500;
-    res.status(code).send({
+    res.set('Content-Type', 'application/json');
+    res.status(code).json({
+        'mbid' : mbid,
         'status' : code,
         'message' : err.message
+    });
+}
+
+
+/**
+ * Artists DELETE request for our RestAPI. It's called from swagger middleware.
+ * 
+ * @export
+ * @param {any} req
+ * @param {any} res
+ * @param {any} next
+ * @returns
+ */
+export function remove(req, res, next) {
+    // The request parameter.
+    var mbid = req.swagger.params.mbid.value;
+
+    // Check if we got a valid mbid
+    try {
+        musicbrainz.validate(mbid);  
+    } catch (error) {
+        _sendError(res, mbid, error);
+        return;
+    }
+
+    database.deleteArtist(mbid).then((result) => 
+    {
+        // If the mbid is cached remove it.
+        cache.del(mbid);
+        // 
+        _sendSuccess(res, mbid, `Artist is deleted.`);
+    }).catch((err) => {
+        _sendError(res, mbid, err);
+        return err;
     });
 }
 
@@ -103,7 +158,7 @@ export function get(req, res, next) {
     var cacheResult = cache.get(mbid);
     if (cacheResult)
     {
-        _sendSuccess(res, mbid, cacheResult);
+        _sendResult(res, mbid, cacheResult);
         return;
     }
 
@@ -116,7 +171,7 @@ export function get(req, res, next) {
             if (result instanceof Error)
                 _sendError(res, mbid, result);
             else
-                _sendSuccess(res, mbid, result);
+                _sendResult(res, mbid, result);
         });
     }
     else
@@ -127,7 +182,7 @@ export function get(req, res, next) {
             if (result)
             {
                 // We got the result from the database send it to the client.
-                _sendSuccess(res, mbid, result);
+                _sendResult(res, mbid, result);
                 return result;
             }
 
@@ -153,7 +208,7 @@ export function get(req, res, next) {
                 return database.saveArtist(finalResult);
             }).then(function(result) {
                 // The final json is stored in database, send it to the client.
-                _sendSuccess(res, mbid, result);
+                _sendResult(res, mbid, result);
                 return result;
             });
 
@@ -164,7 +219,7 @@ export function get(req, res, next) {
             _sendError(res, mbid, err);
             return err;
         }).catch((err) => {
-            // We got some unkown error, should be logged, so we can handle it with our defined errors, like RateLimit.
+            // We got some unknown error, should be logged, so we can handle it with our defined errors, like RateLimit.
             // send the error to the client.
             _sendError(res, mbid, err);
             return err;
