@@ -299,11 +299,13 @@ V3.0 - ideer.
 docker build -t music-server:latest .
 
 ## Run the image
-docker run --restart=always --name app-container -e MYSQL_HOST=172.17.0.1 -p 10010:10010 -d music-server:latest
+docker run --restart=always --name app-container -e MYSQL_HOST=172.17.0.1 -e "DEBUG_COLORS=true" -e DEBUG="web,musicbrainz,coverart,wikipedia" -p 10010:10010 -d music-server:latest
 
 ## Run the mysql docker image
 docker run --restart=always --name db-container -e MYSQL_ROOT_PASSWORD=xxx -p 3306:3306 -d mysql/mysql-server:latest
 
 ## Publish docker image
 docker save music-server:latest | bzip2 | pv | ssh root@95.85.24.243 'bunzip2 | docker load'
+
+
 
