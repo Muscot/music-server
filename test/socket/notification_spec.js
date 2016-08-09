@@ -23,7 +23,6 @@ describe('socket', function() {
         var p1 = new Promise((resolved, rejected) => {
             io.emit('subscribe', '/debug');
             io.on('/debug', (message) => {
-                console.log("io.on" + message);
                 resolved(message);
             });
         });
