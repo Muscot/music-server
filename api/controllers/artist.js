@@ -1,19 +1,10 @@
-
 import {cache as config} from '../../config';
 import * as coverart from '../../loaders/coverart';
 import * as musicbrainz from '../../loaders/musicbrainz';
 import * as wikipedia from '../../loaders/wikipedia';
 import * as database from '../../database';
-import LruCache from 'simple-lru-cache';
+import {cache, pending} from '../../cache';
 import {merge} from 'lodash';
-
-// Cache to store all pending request so we can share the promises.
-var pending = new LruCache({"maxSize": 1000});
-
-// cache for the most common result, it's better to just cache the result than promises
-// the server will use less memory. We cache the serialized version it will help the CPU alot
-// not need to serialize all the responses. 
-var cache = new LruCache({"maxSize": config.maxSize});
 
 /**
  * List all the artist that have been saved in the database
