@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
             "stopOnEntry": false,
-            "args": ["--no-timeouts", "--colors", "--recursive", "build"], //you can specify paths to specific tests here
+            "args": ["--no-timeouts", "--colors", "--recursive", "build/test/socket"], //you can specify paths to specific tests here
             "runtimeExecutable": null,
             "sourceMaps": true,
             "cwd": "${workspaceRoot}",
