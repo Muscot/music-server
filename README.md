@@ -102,7 +102,7 @@ npm test
 Det finns ett antal debug utskrifter som man kan slå på med DEBUG enviroment variable.
 
 ```
-  DEBUG=database,musicbrainz,coverart,wikipedia npm start
+  DEBUG=web,database,musicbrainz,coverart,wikipedia npm start
 
   database SELECT json FROM artist WHERE mbid = "ff6e677f-91dd-4986-a174-8db0474b1799" +60s
   musicbrainz ff6e677f-91dd-4986-a174-8db0474b1799 Start request +10ms
@@ -128,6 +128,12 @@ Det finns ett antal debug utskrifter som man kan slå på med DEBUG enviroment v
   coverart 76d2dff8-04c1-38bf-b365-a236e46c39bb No image exist (Acoustic Mix) +44ms
 ```
 
+# WebSocket - maintenance page.
+Jag använder mig av WebSocket för att skicka upp status information från servern, minne, cpu etc. 
+skickar även upp DEBUG meddelanden om DEBUG enviroment variabel är satt.
+
+I denna första version så lägger jag till meddelanden på swagger-ui sidan (http://95.85.24.243:10010/). Tanken är att det sen skall
+bli en separat maintenance/admin sida, med inloggning.
 
 ## Konfiguration
 
@@ -182,6 +188,7 @@ export var wikipedia = {
 # Swagger UI
 Jag la till swagger ui på rooten för att testa RestAPI:et.
 * http://95.85.24.243:10010/
+
 
 # Benchmark
 
@@ -253,7 +260,7 @@ Percentage of the requests served within a certain time (ms)
 ```
 
 
-# TODO
+# TODO/NOTES
 
 V1.0
 - Skriv mer information om swagger project/swagger ui
@@ -267,6 +274,9 @@ V1.0
 * Döp om artist controller till artists.
 
 V2.0
+* Gör en admin/maintenance sida som man kan övervaka hur servern mår och vad det gör för tillfället.
+* Bryt ut LRU Cache från Artists controller. Så kan flera controllers använda sig av den, och socket/collectStat kan se hur stor cachen är. 
+
 * Lägg till POST, PATCH requesten.
 * Bättre readme och installations guide.
 * Definiera upp “sources” i swagger.
@@ -281,7 +291,6 @@ V3.0 - ideer.
 * Kanske använda TypeScript och skapa interface för loaders.
 * Flytta delar av artist controller (shared promise, cache) som express middleware.
 * Gör så du kan söka på musicbrainz och plocka ut vilka MBID som skall laddas ned.
-* Gör en admin sida som man kan övervaka hur servern mår och vad det gör för tillfället.
 * Lägg till en news loader (https://www.google.se/#q=nirvana+(band)&tbm=nws)
 
 # DOCKER HELPER
