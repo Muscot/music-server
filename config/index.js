@@ -6,7 +6,7 @@ export var cache =
 export var database = 
 {
     connectionLimit: 15,
-    host: process.env['MYSQL_HOST'] || '192.168.99.100',
+    host: process.env['MYSQL_HOST'] || '127.0.0.1',
     user: 'www',
     password: 'ADS547TYDFGHER7652LKHS',
     database: 'music',

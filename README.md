@@ -20,13 +20,13 @@ Men endast för nya MBID, de andra finns sparade i databasen.
 
 ## Live Demo
 
-- http://95.85.24.243:10010/
-- http://95.85.24.243:10010/artists
-- http://95.85.24.243:10010/artists/5eecaf18-02ec-47af-a4f2-7831db373419
-- http://95.85.24.243:10010/artists/ff6e677f-91dd-4986-a174-8db0474b1799
-- http://95.85.24.243:10010/artists/7249b899-8db8-43e7-9e6e-22f1e736024e
-- http://95.85.24.243:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
-- http://95.85.24.243:10010/artists/e1f1e33e-2e4c-4d43-b91b-7064068d3283
+- http://95.85.40.103:10010/
+- http://95.85.40.103:10010/artists
+- http://95.85.40.103:10010/artists/5eecaf18-02ec-47af-a4f2-7831db373419
+- http://95.85.40.103:10010/artists/ff6e677f-91dd-4986-a174-8db0474b1799
+- http://95.85.40.103:10010/artists/7249b899-8db8-43e7-9e6e-22f1e736024e
+- http://95.85.40.103:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
+- http://95.85.40.103:10010/artists/e1f1e33e-2e4c-4d43-b91b-7064068d3283
 
 ## Installation
 
@@ -132,7 +132,7 @@ Det finns ett antal debug utskrifter som man kan slå på med DEBUG enviroment v
 Jag använder mig av WebSocket för att skicka upp status information från servern, minne, cpu etc. 
 skickar även upp DEBUG meddelanden om DEBUG enviroment variabel är satt.
 
-I denna första version så lägger jag till meddelanden på swagger-ui sidan (http://95.85.24.243:10010/). Tanken är att det sen skall
+I denna första version så lägger jag till meddelanden på swagger-ui sidan (http://95.85.40.103:10010/). Tanken är att det sen skall
 bli en separat maintenance/admin sida, med inloggning.
 
 ## Konfiguration
@@ -187,7 +187,7 @@ export var wikipedia = {
 
 # Swagger UI
 Jag la till swagger ui på rooten för att testa RestAPI:et.
-* http://95.85.24.243:10010/
+* http://95.85.40.103:10010/
 
 
 # Benchmark
@@ -201,12 +201,12 @@ databas, men vi kan ändå se att prestandan ligger runt 1000 request per second
 * 1TB Transfer
 
 ```
-root@docker-music-server:~# ab -k -n100000 -c150 http://95.85.24.243:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
+root@docker-music-server:~# ab -k -n100000 -c150 http://95.85.40.103:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
 This is ApacheBench, Version 2.3 <$Revision: 1528965 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
-Benchmarking 95.85.24.243 (be patient)
+Benchmarking 95.85.40.103 (be patient)
 Completed 10000 requests
 Completed 20000 requests
 Completed 30000 requests
@@ -221,7 +221,7 @@ Finished 100000 requests
 
 
 Server Software:        
-Server Hostname:        95.85.24.243
+Server Hostname:        95.85.40.103
 Server Port:            10010
 
 Document Path:          /artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
@@ -305,7 +305,7 @@ docker run --restart=always --name app-container -e MYSQL_HOST=172.17.0.1 -e "DE
 docker run --restart=always --name db-container -e MYSQL_ROOT_PASSWORD=xxx -p 3306:3306 -d mysql/mysql-server:latest
 
 ## Publish docker image
-docker save music-server:latest | bzip2 | pv | ssh root@95.85.24.243 'bunzip2 | docker load'
+docker save music-server:latest | bzip2 | pv | ssh root@95.85.40.103 'bunzip2 | docker load'
 
 
 
