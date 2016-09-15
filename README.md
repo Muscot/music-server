@@ -1,4 +1,5 @@
-## Hur vi uppnår ett restAPi som klarar av hög belastning.
+## Hur vi uppnår ett restAPi som klarar av hög belastning. ##
+### (ett litet projekt på 3-4 dagar) ###
 
 #Cache
 
@@ -18,15 +19,14 @@ Detta gör också att vi hjälper databasen att klara av hög belastning.
 - **Retry:** För varje loader så har vi möjlighet att konfigurera hur många gånger som den skall försöka hämta resultatet. Efter varje försök så ökar vi tiden den väntar innan nästa försöka. Detta gör att våra svarstider från vårt RestAPI kan vara långa om vi överstiger våran rate limit. 
 Men endast för nya MBID, de andra finns sparade i databasen.  
 
-## Live Demo
+## Example URLS
 
-- http://95.85.40.103:10010/
-- http://95.85.40.103:10010/artists
-- http://95.85.40.103:10010/artists/5eecaf18-02ec-47af-a4f2-7831db373419
-- http://95.85.40.103:10010/artists/ff6e677f-91dd-4986-a174-8db0474b1799
-- http://95.85.40.103:10010/artists/7249b899-8db8-43e7-9e6e-22f1e736024e
-- http://95.85.40.103:10010/artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
-- http://95.85.40.103:10010/artists/e1f1e33e-2e4c-4d43-b91b-7064068d3283
+- /artists
+- /artists/5eecaf18-02ec-47af-a4f2-7831db373419
+- /artists/ff6e677f-91dd-4986-a174-8db0474b1799
+- /artists/7249b899-8db8-43e7-9e6e-22f1e736024e
+- /artists/5b11f4ce-a62d-471e-81fc-a69a8278c7da
+- /artists/e1f1e33e-2e4c-4d43-b91b-7064068d3283
 
 ## Installation
 
