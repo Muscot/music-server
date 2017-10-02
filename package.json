@@ -27,7 +27,8 @@
     "simple-lru-cache": "0.0.2",
     "socket.io": "^1.4.8",
     "socket.io-client": "^1.4.8",
-    "swagger-express-mw": "^0.1.0"
+    "swagger-express-mw": "^0.1.0",
+    "swagger-node-runner": "^0.7.1"
   },
   "devDependencies": {
     "should": "^7.1.0",
@@ -40,10 +41,11 @@
   },
   "scripts": {
     "start": "node build/app.js",
+    "dev": "npm run build && npm run debug",
+    "debug": "node --nolazy --inspect-brk=9229 build/app.js",
     "test": "mocha --no-timeouts --colors --recursive build/",
     "build": "babel . -d build/ --ignore build,node_modules,public",
-    "prebuild": "n-copy --source api/swagger --destination build/api/swagger '*'",
-    "build:watch": "babel . -watch -d build/ --ignore build,node_modules,public"
+    "prebuild": "n-copy --source api/swagger --destination build/api/swagger '*'"
   },
   "babel": {
     "presets": [

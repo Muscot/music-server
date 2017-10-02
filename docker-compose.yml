@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  music-server-db:
+    image: mysql/mysql-server:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: "ferdnand"
+    ports:
+      - 3306:3306
+
+  music-server:
+    image: music-server:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      MYSQL_HOST: music-server-db
+      PORT: 10010
+    ports:
+      - 10010:10010
