@@ -1,27 +1,27 @@
-'use strict';
-var ws = require('./socket');
-var express = require('express');
-var SwaggerExpress = require('swagger-express-mw');
-var timeout = require('connect-timeout');
+import * as ws from './socket';
+import express from 'express';
+import runner from 'swagger-node-runner';
+import timeout from 'connect-timeout';
+import { SwaggerUIBundle, SwaggerUIStandalonePreset } from "swagger-ui-dist";
+import {web as config} from './config';
+
+const swaggerUiAssetPath = require("swagger-ui-dist").getAbsoluteFSPath();
 
 var app = express();
 module.exports = app; // for testing
 
-var config = {
-  appRoot: __dirname // required config
-};
-
-SwaggerExpress.create(config, function(err, swaggerExpress) {
+runner.create({ appRoot: __dirname }, function(err, swaggerRunner) {
   if (err) { throw err; }
 
-  app.use(timeout(10 * 60 * 1000)); // 10 minute
+  app.use(timeout(config.timeout)); // 10 minute
 
   // install middleware
   ws.register(app);
-  swaggerExpress.register(app);
-
-  var port = process.env.PORT || 10010;
+  swaggerRunner.expressMiddleware().register(app);
 
   app.use('/', express.static('public'));
-  ws.listen(app.listen(port));
+  app.use('/ui', express.static(swaggerUiAssetPath));
+  app.use('/swagger', express.static('api/swagger/swagger.yaml'));
+  
+  ws.listen(app.listen(config.port));
 });
