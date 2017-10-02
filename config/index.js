@@ -3,6 +3,12 @@ export var cache =
     maxSize: 1500 // Number of artists to cache.
 };
 
+export var web =
+{
+    port: process.env.PORT || 10010,
+    timeout: 10 * 60 * 1000 // 10 minute
+};
+
 export var database = 
 {
     connectionLimit: 15,
